@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Person {
+public class Person implements Comparable<Person>{
 	public String email;
 	public String name;
 	public boolean presenter;
@@ -13,20 +13,20 @@ public class Person {
 	public Person(String line) {
 		String[] temp = line.split(",");
 		// TODO: collect email
-		this.email = "email";
-		this.name = temp[1];
-		this.presenter = (temp[2].equals("Yes"));
-		this.observer = (temp[6].equals("Yes"));
+		this.email = temp[2];
+		this.name = temp[1].substring(0, 1).toUpperCase() + temp[1].substring(1).toLowerCase();
+		this.presenter = (temp[3].equals("Yes"));
+		this.observer = (temp[7].equals("Yes"));
 		if (this.presenter) {
-			String[] time = temp[5].split("-");
+			String[] time = temp[6].split("-");
 			if (time.length == 2) {
 				this.sectionTime = Integer.parseInt(time[1]
 						.split(":")[0].replaceAll(" ", "")) - 1;
 			} else {
 				this.sectionTime = -1;
 			}
-			this.course = temp[3];
-			this.location = temp[4];
+			this.course = temp[4];
+			this.location = temp[5];
 		}
 		if (this.observer) {
 			collectAvail(temp);
@@ -35,7 +35,7 @@ public class Person {
 	
 	public void collectAvail(String[] info) {
 		List<Integer> times = new ArrayList<>();
-		int index = 7;
+		int index = 8;
 		while(index < info.length && info[index].split("-").length == 2) {
 			String cur = info[index];
 			String[] slot = cur.split("-");
@@ -48,8 +48,16 @@ public class Person {
 	}
 	
 	public String toString() {
-		return this.name + " " + this.email + " " + this.course + " " 
-				+ this.location + " " + this.sectionTime;
+		return this.name;
+	}
+	
+	public int compareTo(Person other) {
+		return this.avail.size() - other.avail.size();
+	}
+	
+	public String getSectionTime() {
+		int end = this.sectionTime + 1;
+		return this.sectionTime + ":30 - " + end + ":20";
 	}
 
 }
